@@ -128,13 +128,14 @@ static void initRequestWithHandler(struct mg_connection *c, int ev, void *ev_dat
                 struct mg_tls_opts opts = {.ca = "ca.pem", .srvname = host};
                 mg_tls_init(c, &opts);
             }
-
+            char *apiKey = getenv("API_KEY");
             // Send request
             mg_printf(c,
                       "GET %s HTTP/1.0\r\n"
                       "Host: %.*s\r\n"
+                      "x-api-key: %s\r\n"
                       "\r\n",
-                      mg_url_uri(rt->calledUrl), (int) host.len, host.ptr);
+                      mg_url_uri(rt->calledUrl), (int) host.len, host.ptr, apiKey);
             break;
         case MG_EV_HTTP_MSG:
             struct mg_http_message *hm = (struct mg_http_message *) ev_data;
