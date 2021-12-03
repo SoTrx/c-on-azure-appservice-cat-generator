@@ -21,7 +21,6 @@ static struct request {
 
     /** Request handler **/
     void (*handler)(struct request *rt, struct mg_http_message *hm);
-
 };
 
 
@@ -49,13 +48,13 @@ static inline void setResponseBufferValue(struct request *rt, const char *value,
  */
 static void parseFirstCatUrl(struct mg_http_message *response, const char *catUrl) {
     // Don't forget the NULL after the body
-    const char *responseBuffer = malloc(sizeof(char) * response->body.len + 1);
+    char *responseBuffer = malloc(sizeof(char) * response->body.len + 1);
     if (!responseBuffer) {
         perror("Memory allocation error. Aborting");
         exit(-1);
     }
     sprintf(responseBuffer, "%.*s", (int) response->body.len, response->body.ptr);
-    char *cb;
+    const char *cb;
     int len;
     if (!mjson_find(responseBuffer, strlen(responseBuffer), "$[0].url", &cb, &len)) {
         // The OS should handle this. But hey, this might be embedded code
@@ -126,7 +125,6 @@ static void initRequestWithHandler(struct mg_connection *c, int ev, void *ev_dat
 
             // If s_url is https://, tell client connection to use TLS
             if (mg_url_is_ssl(rt->calledUrl)) {
-                printf("TLS\n");
                 struct mg_tls_opts opts = {.ca = "ca.pem", .srvname = host};
                 mg_tls_init(c, &opts);
             }

@@ -1,3 +1,5 @@
+#include "log.h"
+#include <stdlib.h>
 #include "mongoose.h"
 #include "cat-api.h"
 
@@ -8,6 +10,8 @@ static void serveRandomCat(struct mg_connection *c, int ev, void *ev_data, void 
         struct mg_mgr *mgr = (struct mg_mgr *) fn_data;
         char *catUrl;
         getRandomCatUrl(mgr, &catUrl);
+        log_info("Serving cat: ");
+        log_info(catUrl);
 
         // Then get's the image to pass into the body
         char *catBytes;
@@ -33,6 +37,12 @@ static void serveRandomCat(struct mg_connection *c, int ev, void *ev_data, void 
 }
 
 int main() {
+    char *apiKey = getenv("API_KEY");
+    if (!strcmp(apiKey, "")) {
+        log_error("No API key provided, aborting !");
+        exit(-1);
+    }
+    log_info("Started App");
     struct mg_mgr mgr;
     mg_mgr_init(&mgr);
     mg_http_listen(&mgr, "0.0.0.0:8081", serveRandomCat, &mgr);
