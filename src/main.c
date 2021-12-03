@@ -38,7 +38,7 @@ static void serveRandomCat(struct mg_connection *c, int ev, void *ev_data, void 
 
 int main() {
     char *apiKey = getenv("API_KEY");
-    if (!strcmp(apiKey, "")) {
+    if (!apiKey) {
         log_error("No API key provided, aborting !");
         exit(-1);
     }
