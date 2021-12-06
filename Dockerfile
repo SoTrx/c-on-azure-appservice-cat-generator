@@ -63,6 +63,7 @@ COPY --from=builder --chmod=0500 --chown=appuser:appuser  /app/c_on_azure_cat_ap
 COPY --from=builder --chmod=0500 --chown=appuser:appuser  /app/ca.pem ./ca.pem
 
 WORKDIR /home/site/wwwroot
+COPY --chmod=0444 assets/ .
 EXPOSE 80 2222
 ENTRYPOINT [ "/bin/init_container.sh" ]
 
